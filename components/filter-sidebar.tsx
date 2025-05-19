@@ -1,76 +1,90 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronDown, ChevronUp, X } from "lucide-react"
+import { useState } from "react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 
 export interface FilterOption {
-  id: string
-  label: string
-  count?: number
+  id: string;
+  label: string;
+  count?: number;
 }
 
 export interface FilterSection {
-  id: string
-  title: string
-  type: "checkbox" | "tag"
-  options: FilterOption[]
+  id: string;
+  title: string;
+  type: "checkbox" | "tag";
+  options: FilterOption[];
 }
 
 export interface FilterSidebarProps {
-  sections: FilterSection[]
-  className?: string
-  onApplyFilters?: (selectedFilters: Record<string, string[]>) => void
+  sections: FilterSection[];
+  className?: string;
+  onApplyFilters?: (selectedFilters: Record<string, string[]>) => void;
 }
 
-export function FilterSidebar({ sections, className, onApplyFilters }: FilterSidebarProps) {
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
-    sections.reduce((acc, section) => ({ ...acc, [section.id]: true }), {}),
-  )
+export function FilterSidebar({
+  sections,
+  className,
+  onApplyFilters,
+}: FilterSidebarProps) {
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >(sections.reduce((acc, section) => ({ ...acc, [section.id]: true }), {}));
 
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>(
-    sections.reduce((acc, section) => ({ ...acc, [section.id]: [] }), {}),
-  )
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >(sections.reduce((acc, section) => ({ ...acc, [section.id]: [] }), {}));
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) => ({
       ...prev,
       [sectionId]: !prev[sectionId],
-    }))
-  }
+    }));
+  };
 
   const toggleFilter = (sectionId: string, optionId: string) => {
     setSelectedFilters((prev) => {
-      const sectionFilters = [...prev[sectionId]]
-      const optionIndex = sectionFilters.indexOf(optionId)
+      const sectionFilters = [...prev[sectionId]];
+      const optionIndex = sectionFilters.indexOf(optionId);
 
       if (optionIndex === -1) {
-        sectionFilters.push(optionId)
+        sectionFilters.push(optionId);
       } else {
-        sectionFilters.splice(optionIndex, 1)
+        sectionFilters.splice(optionIndex, 1);
       }
 
       return {
         ...prev,
         [sectionId]: sectionFilters,
-      }
-    })
-  }
+      };
+    });
+  };
 
   const clearAllFilters = () => {
-    setSelectedFilters(sections.reduce((acc, section) => ({ ...acc, [section.id]: [] }), {}))
-  }
+    const clearedFilters = sections.reduce(
+      (acc: Record<string, string[]>, section) => {
+        acc[section.id] = [];
+        return acc;
+      },
+      {}
+    );
+    setSelectedFilters(clearedFilters);
+    onApplyFilters?.(clearedFilters);
+  };
 
   const applyFilters = () => {
-    onApplyFilters?.(selectedFilters)
-  }
+    onApplyFilters?.(selectedFilters);
+  };
 
-  const hasActiveFilters = Object.values(selectedFilters).some((filters) => filters.length > 0)
+  const hasActiveFilters = Object.values(selectedFilters).some(
+    (filters) => filters.length > 0
+  );
 
   return (
     <div className={cn("w-full max-w-xs flex flex-col h-full", className)}>
@@ -91,7 +105,11 @@ export function FilterSidebar({ sections, className, onApplyFilters }: FilterSid
               onClick={() => toggleSection(section.id)}
             >
               {section.title}
-              {expandedSections[section.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {expandedSections[section.id] ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
             </button>
 
             {expandedSections[section.id] && (
@@ -99,17 +117,29 @@ export function FilterSidebar({ sections, className, onApplyFilters }: FilterSid
                 {section.type === "checkbox" ? (
                   <div className="space-y-2">
                     {section.options.map((option) => (
-                      <div key={option.id} className="flex items-center space-x-2">
+                      <div
+                        key={option.id}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={`${section.id}-${option.id}`}
-                          checked={selectedFilters[section.id].includes(option.id)}
-                          onCheckedChange={() => toggleFilter(section.id, option.id)}
+                          checked={selectedFilters[section.id].includes(
+                            option.id
+                          )}
+                          onCheckedChange={() =>
+                            toggleFilter(section.id, option.id)
+                          }
                         />
-                        <label htmlFor={`${section.id}-${option.id}`} className="text-sm flex-1 cursor-pointer">
+                        <label
+                          htmlFor={`${section.id}-${option.id}`}
+                          className="text-sm flex-1 cursor-pointer"
+                        >
                           {option.label}
                         </label>
                         {option.count !== undefined && (
-                          <span className="text-xs text-muted-foreground">({option.count})</span>
+                          <span className="text-xs text-muted-foreground">
+                            ({option.count})
+                          </span>
                         )}
                       </div>
                     ))}
@@ -117,7 +147,9 @@ export function FilterSidebar({ sections, className, onApplyFilters }: FilterSid
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {section.options.map((option) => {
-                      const isSelected = selectedFilters[section.id].includes(option.id)
+                      const isSelected = selectedFilters[section.id].includes(
+                        option.id
+                      );
                       return (
                         <Badge
                           key={option.id}
@@ -128,7 +160,7 @@ export function FilterSidebar({ sections, className, onApplyFilters }: FilterSid
                           {option.label}
                           {isSelected && <X className="ml-1 h-3 w-3" />}
                         </Badge>
-                      )
+                      );
                     })}
                   </div>
                 )}
@@ -146,5 +178,5 @@ export function FilterSidebar({ sections, className, onApplyFilters }: FilterSid
         </Button>
       </div>
     </div>
-  )
+  );
 }
