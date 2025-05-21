@@ -1,30 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { Eye, ShoppingCart } from "lucide-react"
+import { useState } from "react";
+import Image from "next/image";
+import { Eye, ShoppingCart } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export interface ProductCardProps {
-  id: string
-  title: string
-  price: number
-  image: string
-  tag?: "new" | "out-of-stock" | null
-  onQuickView?: (id: string) => void
-  onAddToCart?: (id: string) => void
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  tag?: "new" | "out-of-stock" | null;
+  onQuickView?: (id: string) => void;
+  onAddToCart?: (id: string) => void;
 }
 
-export function ProductCard({ id, title, price, image, tag = null, onQuickView, onAddToCart }: ProductCardProps) {
-  const [imageError, setImageError] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
+export function ProductCard({
+  id,
+  title,
+  price,
+  image,
+  tag = null,
+  onQuickView,
+  onAddToCart,
+}: ProductCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleImageError = () => {
-    setImageError(true)
-  }
+    setImageError(true);
+  };
 
   return (
     <div
@@ -42,7 +50,12 @@ export function ProductCard({ id, title, price, image, tag = null, onQuickView, 
         />
 
         {tag && (
-          <Badge className={cn("absolute left-2 top-2 z-10", tag === "out-of-stock" ? "bg-destructive" : "bg-primary")}>
+          <Badge
+            className={cn(
+              "absolute left-2 top-2 z-10",
+              tag === "out-of-stock" ? "bg-destructive" : "bg-primary"
+            )}
+          >
             {tag === "new" ? "New" : "Out of Stock"}
           </Badge>
         )}
@@ -50,10 +63,15 @@ export function ProductCard({ id, title, price, image, tag = null, onQuickView, 
         <div
           className={cn(
             "absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity",
-            isHovered && "opacity-100",
+            isHovered && "opacity-100"
           )}
         >
-          <Button size="sm" variant="secondary" onClick={() => onQuickView?.(id)} disabled={tag === "out-of-stock"}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => onQuickView?.(id)}
+            disabled={tag === "out-of-stock"}
+          >
             <Eye className="mr-2 h-4 w-4" />
             Quick View
           </Button>
@@ -65,10 +83,15 @@ export function ProductCard({ id, title, price, image, tag = null, onQuickView, 
         <p className="text-sm font-semibold">${price.toFixed(2)}</p>
       </div>
 
-      <Button className="mt-3 w-full" size="sm" disabled={tag === "out-of-stock"} onClick={() => onAddToCart?.(id)}>
+      <Button
+        className="mt-3 w-full"
+        size="sm"
+        disabled={tag === "out-of-stock"}
+        onClick={() => onAddToCart?.(id)}
+      >
         <ShoppingCart className="mr-2 h-4 w-4" />
         Add to Cart
       </Button>
     </div>
-  )
+  );
 }

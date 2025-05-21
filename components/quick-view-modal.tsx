@@ -1,69 +1,84 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { X } from "lucide-react"
+import { useState } from "react";
+import Image from "next/image";
+import { X } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface ProductVariant {
-  id: string
-  name: string
-  available: boolean
+  id: string;
+  name: string;
+  available: boolean;
 }
 
 export interface ProductSize {
-  id: string
-  name: string
-  available: boolean
+  id: string;
+  name: string;
+  available: boolean;
 }
 
 export interface QuickViewProduct {
-  id: string
-  title: string
-  price: number
-  description: string
-  image: string
-  variants: ProductVariant[]
-  sizes: ProductSize[]
+  id: string;
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+  variants: ProductVariant[];
+  sizes: ProductSize[];
 }
 
 export interface QuickViewModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  product: QuickViewProduct | null
-  loading?: boolean
-  onAddToCart?: (product: QuickViewProduct, variant: string, size: string) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  product: QuickViewProduct | null;
+  loading?: boolean;
+  onAddToCart?: (
+    product: QuickViewProduct,
+    variant: string,
+    size: string
+  ) => void;
 }
 
-export function QuickViewModal({ open, onOpenChange, product, loading = false, onAddToCart }: QuickViewModalProps) {
-  const [selectedVariant, setSelectedVariant] = useState<string>("")
-  const [selectedSize, setSelectedSize] = useState<string>("")
-  const [imageLoaded, setImageLoaded] = useState(false)
+export function QuickViewModal({
+  open,
+  onOpenChange,
+  product,
+  loading = false,
+  onAddToCart,
+}: QuickViewModalProps) {
+  const [selectedVariant, setSelectedVariant] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleAddToCart = () => {
     if (product && selectedVariant && selectedSize) {
-      onAddToCart?.(product, selectedVariant, selectedSize)
-      onOpenChange(false)
+      onAddToCart?.(product, selectedVariant, selectedSize);
+      onOpenChange(false);
     }
-  }
+  };
 
   // Reset selections when modal opens with a new product
   if (product && open && (!selectedVariant || !selectedSize)) {
-    const firstAvailableVariant = product.variants.find((v) => v.available)
-    const firstAvailableSize = product.sizes.find((s) => s.available)
+    const firstAvailableVariant = product.variants.find((v) => v.available);
+    const firstAvailableSize = product.sizes.find((s) => s.available);
 
     if (firstAvailableVariant && !selectedVariant) {
-      setSelectedVariant(firstAvailableVariant.id)
+      setSelectedVariant(firstAvailableVariant.id);
     }
 
     if (firstAvailableSize && !selectedSize) {
-      setSelectedSize(firstAvailableSize.id)
+      setSelectedSize(firstAvailableSize.id);
     }
   }
 
@@ -120,9 +135,13 @@ export function QuickViewModal({ open, onOpenChange, product, loading = false, o
             </div>
 
             <div className="p-6 space-y-4">
-              <DialogTitle className="text-xl font-semibold">{product.title}</DialogTitle>
+              <DialogTitle className="text-xl font-semibold">
+                {product.title}
+              </DialogTitle>
               <p className="text-xl font-bold">${product.price.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">{product.description}</p>
+              <p className="text-sm text-muted-foreground">
+                {product.description}
+              </p>
 
               <div className="space-y-3">
                 <Label htmlFor="variant">Color</Label>
@@ -133,11 +152,20 @@ export function QuickViewModal({ open, onOpenChange, product, loading = false, o
                   className="flex flex-wrap gap-2"
                 >
                   {product.variants.map((variant) => (
-                    <div key={variant.id} className="flex items-center space-x-2">
-                      <RadioGroupItem value={variant.id} id={`variant-${variant.id}`} disabled={!variant.available} />
+                    <div
+                      key={variant.id}
+                      className="flex items-center space-x-2"
+                    >
+                      <RadioGroupItem
+                        value={variant.id}
+                        id={`variant-${variant.id}`}
+                        disabled={!variant.available}
+                      />
                       <Label
                         htmlFor={`variant-${variant.id}`}
-                        className={cn(!variant.available && "opacity-50 cursor-not-allowed")}
+                        className={cn(
+                          !variant.available && "opacity-50 cursor-not-allowed"
+                        )}
                       >
                         {variant.name}
                       </Label>
@@ -156,10 +184,16 @@ export function QuickViewModal({ open, onOpenChange, product, loading = false, o
                 >
                   {product.sizes.map((size) => (
                     <div key={size.id} className="flex items-center space-x-2">
-                      <RadioGroupItem value={size.id} id={`size-${size.id}`} disabled={!size.available} />
+                      <RadioGroupItem
+                        value={size.id}
+                        id={`size-${size.id}`}
+                        disabled={!size.available}
+                      />
                       <Label
                         htmlFor={`size-${size.id}`}
-                        className={cn(!size.available && "opacity-50 cursor-not-allowed")}
+                        className={cn(
+                          !size.available && "opacity-50 cursor-not-allowed"
+                        )}
                       >
                         {size.name}
                       </Label>
@@ -168,7 +202,11 @@ export function QuickViewModal({ open, onOpenChange, product, loading = false, o
                 </RadioGroup>
               </div>
 
-              <Button className="w-full" onClick={handleAddToCart} disabled={!selectedVariant || !selectedSize}>
+              <Button
+                className="w-full"
+                onClick={handleAddToCart}
+                disabled={!selectedVariant || !selectedSize}
+              >
                 Add to Cart
               </Button>
             </div>
@@ -176,5 +214,5 @@ export function QuickViewModal({ open, onOpenChange, product, loading = false, o
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
