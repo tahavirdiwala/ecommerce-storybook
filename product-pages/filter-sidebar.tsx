@@ -17,8 +17,8 @@ export default function FilterSidebarDemo() {
     <div className="container mx-auto py-8">
       <h1 className="text-2xl font-bold mb-6">Filter Sidebar Component</h1>
 
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-64 border rounded-lg">
+      <div className="flex gap-2">
+        <div className="border rounded-lg">
           <FilterSidebar
             sections={filterSections}
             onApplyFilters={handleApplyFilters}
